@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Lantern Keeper — Chapter Three</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --desk: #241d18;
+    --desk-glow: #4a3a2c;
+    --paper: #f7f1e3;
+    --paper-edge: #e8ddc8;
+    --ink: #2a241d;
+    --ink-dim: #6d6152;
+    --rule: rgba(42,36,29,.18);
+    --accent: #9c4221;
+    --serif: "Crimson Pro", "Iowan Old Style", Georgia, "Times New Roman", serif;
+    --display: "Instrument Serif", "Crimson Pro", Georgia, serif;
+    --measure: 33rem;
+  }
+
+  /* ---- reading themes ---- */
+  body[data-theme="sepia"]{
+    --desk: #2b2119;
+    --paper: #f2e5cd;
+    --paper-edge: #ddcaa8;
+    --ink: #33281c;
+    --ink-dim: #6b5a44;
+    --rule: rgba(51,40,28,.2);
+    --accent: #8a3f1c;
+  }
+  body[data-theme="night"]{
+    --desk: #0d0c0b;
+    --desk-glow: #1c1a17;
+    --paper: #1a1917;
+    --paper-edge: #24221f;
+    --ink: #d8d2c6;
+    --ink-dim: #8e877b;
+    --rule: rgba(216,210,198,.16);
+    --accent: #c98b5c;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ -webkit-text-size-adjust: 100%; }
+
+  body{
+    margin: 0;
+    min-height: 100vh;
+    padding: clamp(1.25rem, 4vw, 3.5rem) clamp(1rem, 3vw, 3rem) clamp(2rem, 6vw, 5rem);
+    background:
+      radial-gradient(120% 80% at 50% -10%, var(--desk-glow) 0%, transparent 62%),
+      radial-gradient(90% 60% at 50% 110%, rgba(0,0,0,.35) 0%, transparent 70%),
+      var(--desk);
+    color: var(--ink);
+    font-family: var(--serif);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.4rem;
+    transition: background-color .45s ease, color .45s ease;
+  }
+
+  /* ---------------- theme switch ---------------- */
+  .themes{
+    align-self: flex-end;
+    display: flex;
+    gap: .1rem;
+    padding: .22rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.09);
+    backdrop-filter: blur(6px);
+  }
+  .themes button{
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: rgba(255,255,255,.55);
+    font-family: var(--serif);
+    font-size: .78rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .42rem .85rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: color .2s ease, background-color .2s ease;
+  }
+  .themes button:hover{ color: rgba(255,255,255,.9); }
+  .themes button[aria-pressed="true"]{
+    background: rgba(255,255,255,.14);
+    color: #fff;
+  }
+  .themes button:focus-visible{ outline: 2px solid #c98b5c; outline-offset: 2px; }
+
+  /* ---------------- the book ---------------- */
+  .book{
+    width: min(1140px, 100%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    filter: drop-shadow(0 34px 50px rgba(0,0,0,.55)) drop-shadow(0 6px 12px rgba(0,0,0,.35));
+    animation: rise .9s cubic-bezier(.2,.7,.3,1) both;
+  }
+  @keyframes rise{
+    from{ opacity: 0; transform: translateY(18px); }
+    to{ opacity: 1; transform: none; }
+  }
+
+  .page{
+    position: relative;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,.05), transparent 7%, transparent 93%, rgba(0,0,0,.045)),
+      repeating-linear-gradient(0deg, rgba(0,0,0,.012) 0 1px, transparent 1px 3px),
+      var(--paper);
+    padding: clamp(1.6rem, 3.4vw, 3.4rem) clamp(1.5rem, 3.6vw, 3.6rem);
+    display: flex;
+    flex-direction: column;
+    min-height: 30rem;
+    transition: background-color .45s ease, color .45s ease;
+  }
+  .page--left{
+    border-radius: 3px 0 0 3px;
+    box-shadow: inset -18px 0 26px -22px rgba(0,0,0,.55);
+  }
+  .page--right{
+    border-radius: 0 3px 3px 0;
+    box-shadow: inset 18px 0 26px -22px rgba(0,0,0,.55);
+  }
+  /* page block edges (the stacked leaves beneath) */
+  .page::after{
+    content: "";
+    position: absolute;
+    left: 6px; right: 6px; bottom: -5px;
+    height: 5px;
+    background: var(--paper-edge);
+    border-radius: 0 0 3px 3px;
+    box-shadow: 0 3px 0 -1px var(--paper-edge), 0 6px 0 -2px var(--paper-edge);
+    transition: background-color .45s ease;
+  }
+
+  /* ---------------- page furniture ---------------- */
+  .running-head{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding-bottom: .55rem;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 1.9rem;
+    font-size: .7rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .page--right .running-head{ flex-direction: row-reverse; }
+
+  .folio{
+    margin-top: auto;
+    padding-top: 2rem;
+    text-align: center;
+    font-size: .8rem;
+    letter-spacing: .22em;
+    color: var(--ink-dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .folio::before{
+    content: "";
+    display: block;
+    width: 2.2rem;
+    height: 1px;
+    margin: 0 auto .7rem;
+    background: var(--rule);
+  }
+
+  /* ---------------- chapter opening ---------------- */
+  .chapter-num{
+    margin: 0 0 .35rem;
+    font-family: var(--display);
+    font-weight: 400;
+    font-style: italic;
+    font-size: 1.05rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .chapter-title{
+    margin: 0 0 1.1rem;
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(1.9rem, 4vw, 2.7rem);
+    line-height: 1.12;
+    letter-spacing: -.01em;
+    color: var(--ink);
+  }
+  .chapter-rule{
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    margin: 0 0 1.7rem;
+    color: var(--ink-dim);
+    font-size: .8rem;
+  }
+  .chapter-rule::before,
+  .chapter-rule::after{
+    content: "";
+    height: 1px;
+    background: var(--rule);
+    flex: 1;
+  }
+
+  /* ---------------- body text ---------------- */
+  p{
+    margin: 0 0 .1rem;
+    font-size: clamp(1rem, 1.15vw, 1.08rem);
+    line-height: 1.72;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    hanging-punctuation: first;
+  }
+  p + p{ text-indent: 1.4em; }
+  p.first{ text-indent: 0; }
+  p.cont{ text-indent: 0; }
+  p.cont .lead-in{ font-variant: small-caps; letter-spacing: .05em; }
+  p.first::first-letter{
+    float: left;
+    font-family: var(--display);
+    font-size: 4.1em;
+    line-height: .78;
+    padding: .06em .1em 0 0;
+    color: var(--accent);
+  }
+  .small-caps{ font-variant: small-caps; letter-spacing: .06em; }
+
+  /* ---------------- pull quote ---------------- */
+  .pull{
+    margin: 1.6rem 0;
+    padding: .2rem 0 .2rem 1.1rem;
+    border-left: 2px solid var(--accent);
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 1.3rem;
+    line-height: 1.42;
+    text-align: left;
+    text-indent: 0;
+    color: var(--ink);
+  }
+
+  .fleuron{
+    margin: 1.5rem 0 1.2rem;
+    text-align: center;
+    color: var(--ink-dim);
+    letter-spacing: .8em;
+    font-size: .85rem;
+  }
+
+  /* ---------------- responsive ---------------- */
+  @media (max-width: 820px){
+    .book{
+      grid-template-columns: 1fr;
+      filter: drop-shadow(0 18px 30px rgba(0,0,0,.5));
+    }
+    .page{ min-height: 0; }
+    .page--left{
+      border-radius: 3px 3px 0 0;
+      box-shadow: inset 0 -16px 24px -22px rgba(0,0,0,.5);
+    }
+    .page--right{
+      border-radius: 0 0 3px 3px;
+      box-shadow: inset 0 16px 24px -22px rgba(0,0,0,.5);
+    }
+    .page--left::after{ display: none; }
+    .page--right::after{ left: 6px; right: 6px; }
+    .page--right .running-head{ flex-direction: row; }
+    .folio{ padding-top: 1.4rem; }
+    .themes{ align-self: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .book{ animation: none; }
+  }
+</style>
+</head>
+<body data-theme="paper">
+
+  <div class="themes" role="group" aria-label="Reading theme">
+    <button type="button" data-set="paper" aria-pressed="true">Paper</button>
+    <button type="button" data-set="sepia" aria-pressed="false">Sepia</button>
+    <button type="button" data-set="night" aria-pressed="false">Night</button>
+  </div>
+
+  <article class="book" aria-label="Book spread, pages 34 and 35">
+
+    <!-- ================= LEFT PAGE ================= -->
+    <section class="page page--left" aria-label="Page 34">
+      <header class="running-head">
+        <span>The Lantern Keeper</span>
+        <span>Chapter Three</span>
+      </header>
+
+      <h1 class="chapter-num">Chapter Three</h1>
+      <h2 class="chapter-title">The Cartographer<br>of Small Hours</h2>
+      <div class="chapter-rule">&#10086;</div>
+
+      <p class="first">The last train out of the hills left at a quarter past eleven, and by midnight the corridor had gone quiet in the particular way that corridors do — not empty, but emptied of purpose. Meera sat with her forehead against the window and watched the dark rehearse its small repetitions: a lamp, a wall, a dog lifting its head, then dark again.</p>
+
+      <p>She had been given the map three days earlier by a man who did not introduce himself and who smelled faintly of kerosene. It was drawn on the back of a railway timetable, in a hand so careful that the rivers had been given the same weight as the roads, and the roads the same weight as the names of villages that no longer existed. <span class="small-caps">Fold it twice</span>, he had said. <span class="small-caps">Read it only by lamplight.</span> She had folded it four times, out of habit, and had not yet decided whether that counted as disobedience.</p>
+
+      <p>The coach swayed. Somewhere ahead, a door slid open and shut with the patience of something that had done it ten thousand times. Meera unfolded the map across her knees and held her phone's torch at an angle so that the creases would not throw shadows, and for a while she simply looked at the place where her own town should have been.</p>
+
+      <p>It was not there. In its place was a small circle, drawn in a different ink, and beside the circle, in letters that leaned left as though listening for something, a single word she could not pronounce.</p>
+
+      <div class="folio">34</div>
+    </section>
+
+    <!-- ================= RIGHT PAGE ================= -->
+    <section class="page page--right" aria-label="Page 35">
+      <header class="running-head">
+        <span>The Lantern Keeper</span>
+        <span>Chapter Three</span>
+      </header>
+
+      <p class="cont"><span class="lead-in">She read it aloud</span>, softly, the way you test a word before you trust it. The word did nothing. The train did nothing. Then the light above her seat dimmed by a degree so slight that she would have missed it had she not been staring at the paper, and the map grew warm under her thumb, the way a stone does when the sun has only just left it.</p>
+
+      <p>What happened next, she would later describe badly and often. The window stopped reflecting her. It stopped reflecting the corridor, the luggage rack, the sleeping man in the blue shirt with his ticket tucked into his cuff. Instead it showed a platform — clean, lamplit, empty — and above the platform a clock whose hands had been painted over.</p>
+
+      <p class="pull">Maps do not record the world. They record the decisions someone made about it.</p>
+
+      <p>The train did not slow. There was no jolt, no hiss of brakes, nothing to suggest that a quarter past eleven had quietly changed its mind. Yet the door at the end of the coach was open now, and beyond it the air smelled of dust and cut grass and, faintly, of kerosene.</p>
+
+      <p>Meera folded the map — twice, this time, as instructed — and put it in her coat. She thought of the man on the platform who had given it to her, and of the way he had not asked for money, and of the one thing he had asked for instead: that she bring back the word, whatever it turned out to mean, and say it to someone who was still waiting.</p>
+
+      <div class="fleuron">&#10087; &#10087; &#10087;</div>
+
+      <p>She stepped down onto the platform. The clock above her had no hands, but it was, she was almost certain, exactly midnight.</p>
+
+      <div class="folio">35</div>
+    </section>
+
+  </article>
+
+<script>
+  const body = document.body;
+  const buttons = document.querySelectorAll('.themes button');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      body.dataset.theme = btn.dataset.set;
+      buttons.forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    });
+  });
+</script>
+</body>
+</html>
