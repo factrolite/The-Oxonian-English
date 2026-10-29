@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="The Oxonian English">
+  <rect width="64" height="64" rx="14" fill="#17140f"/>
+  <path d="M14 18h15a6 6 0 0 1 6 6v24a5 5 0 0 0-5-4H14z" fill="none" stroke="#d9a05b" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M50 18H35a6 6 0 0 0-6 6v24a5 5 0 0 1 5-4h16z" fill="none" stroke="#d9a05b" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M32 24v24" stroke="#d9a05b" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+</svg>
